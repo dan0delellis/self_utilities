@@ -3,29 +3,41 @@ package fileio
 import (
     "encoding/json"
     "os"
-    "self_utilities/errors"
     "io/ioutil"
     "strings"
+    "fmt"
 )
 
-func DumpRawToFile(path string, data string) {
+func DumpRawToFile(path string, data string) (err error) {
+    err = ClearFile(path)
+    if err != nil {
+        fmt.Println("error clearing file:", err)
+        return
+    }
     f, err := os.OpenFile(path,os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-    errors.DieErr(err, "creating file")
+    if err != nil {
+        fmt.Println("error dumping to file:", err)
+        return
+    }
     defer f.Close()
     _, err = f.WriteString(data)
-    errors.DieErr(err, "writing to file")
+    return
 }
 
-func DumpToJsonFile(path string, data interface{}) {
+func DumpToJsonFile(path string, data interface{}) (err error) {
     b, err := json.Marshal(data)
-    errors.DieErr(err, "making a text obj from data")
-    DumpRawToFile(path, string(b))
+    if err != nil {
+        fmt.Println("error marshaling to json:", err)
+        return
+    }
+    err = DumpRawToFile(path, string(b))
+    return
 }
 
-func ClearFile(path string) {
+func ClearFile(path string) (err error) {
     f, err := os.Create(path)
-    errors.DieErr(err,"creating/clearing file")
     f.Close()
+    return
 }
 
 func StrFromPath(path string) (str string, err error) {
