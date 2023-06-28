@@ -1,6 +1,7 @@
 package fileio
 
 import (
+    "bufio"
     "encoding/json"
     "os"
     "io/ioutil"
@@ -48,6 +49,16 @@ func StrFromPath(path string) (str string, err error) {
 
 func BytesFromPath(path string) (b []byte, err error) {
     b, err = ioutil.ReadFile(path)
+    return
+}
+
+func StreamerFromPath(path string) (scanner *bufio.Scanner, file *os.File, err error) {
+    file, err = os.Open(path)
+    if err != nil {
+        return
+    }
+
+    scanner = bufio.NewScanner(file)
     return
 }
 
