@@ -7,8 +7,6 @@ type CandleStream struct {
 }
 
 type Candle struct {
-    StartTime   int
-    Interval    int
     Product     string
     Transactions    []Transaction
     Open    float64
@@ -26,8 +24,7 @@ type Transaction struct {
 
 func (c *Candle) PopulateOHLC(p Candle) {
     c.Open = p.Close
-    c.Interval = p.Interval
-    c.StartTime = p.StartTime + c.Interval
+
     if len(c.Transactions) > 0 {
         c.Open = c.Transactions[0].Price
         for _,v := range c.Transactions {
